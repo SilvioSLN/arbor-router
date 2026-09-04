@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "package": "silviosln/arbor-router",
+  "version": "1.0.0",
+  "php_version": "^8.4",
+  "classes": [
+    {
+      "name": "Router",
+      "namespace": "Arbor\\Router",
+      "description": "Main orchestrator for the file-system router lifecycle.",
+      "methods": [
+        {
+          "name": "__construct",
+          "visibility": "public",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "array{appDir: string, cacheInstance?: CacheInterface, security?: array{headers?: bool, csrf?: bool, apiHeader?: array{name?: string, value?: string}, actionHeader?: array{name?: string, value?: string}}}",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "dispatch",
+          "visibility": "public",
+          "parameters": [
+            {
+              "name": "request",
+              "type": "?Arbor\\Router\\Http\\RequestInterface",
+              "required": false,
+              "default": "null"
+            }
+          ],
+          "returns": "void",
+          "description": "Applies security headers, dispatches the request, handles exceptions, and calls send()."
+        },
+        {
+          "name": "handle",
+          "visibility": "public",
+          "parameters": [
+            {
+              "name": "request",
+              "type": "Arbor\\Router\\Http\\RequestInterface",
+              "required": true
+            }
+          ],
+          "returns": "Arbor\\Router\\Http\\Response",
+          "description": "Resolves route and returns Response object without emitting output."
+        }
+      ]
+    },
+    {
+      "name": "Request",
+      "namespace": "Arbor\\Router\\Http",
+      "implements": ["Arbor\\Router\\Http\\RequestInterface"],
+      "description": "Concrete HTTP request abstraction.",
+      "methods": [
+        { "name": "fromGlobals", "static": true, "returns": "self" },
+        { "name": "create", "static": true, "returns": "self" },
+        { "name": "method", "returns": "string" },
+        { "name": "uri", "returns": "string" },
+        { "name": "path", "returns": "string" },
+        { "name": "query", "returns": "array<string, mixed>" },
+        { "name": "body", "returns": "array<string, mixed>" },
+        { "name": "rawBody", "returns": "string" },
+        { "name": "headers", "returns": "array<string, string>" },
+        { "name": "header", "returns": "?string" },
+        { "name": "contentType", "returns": "?string" },
+        { "name": "accept", "returns": "?string" },
+        { "name": "isAjax", "returns": "bool" },
+        { "name": "files", "returns": "array<string, mixed>" }
+      ]
+    },
+    {
+      "name": "Response",
+      "namespace": "Arbor\\Router\\Http",
+      "description": "Base HTTP response object.",
+      "methods": [
+        { "name": "__construct", "parameters": [{ "name": "body", "type": "string", "default": "''" }, { "name": "statusCode", "type": "int", "default": "200" }, { "name": "headers", "type": "array<string, string>", "default": "[]" }] },
+        { "name": "body", "returns": "string" },
+        { "name": "statusCode", "returns": "int" },
+        { "name": "headers", "returns": "array<string, string>" },
+        { "name": "header", "returns": "?string" },
+        { "name": "withStatus", "returns": "static" },
+        { "name": "withHeader", "returns": "static" },
+        { "name": "withBody", "returns": "static" },
+        { "name": "send", "returns": "void" }
+      ]
+    },
+    {
+      "name": "ActionResult",
+      "namespace": "Arbor\\Router\\Action",
+      "description": "Fluent outcome value object for server actions.",
+      "methods": [
+        { "name": "success", "static": true, "parameters": [{ "name": "message", "type": "?string", "default": "null" }], "returns": "self" },
+        { "name": "error", "static": true, "parameters": [{ "name": "errors", "type": "array<string, string|string[]>", "default": "[]" }, { "name": "message", "type": "?string", "default": "null" }], "returns": "self" },
+        { "name": "fromArray", "static": true, "parameters": [{ "name": "data", "type": "array<string, mixed>" }], "returns": "self" },
+        { "name": "data", "parameters": [{ "name": "data", "type": "array<string, mixed>" }], "returns": "self" },
+        { "name": "redirect", "parameters": [{ "name": "url", "type": "string" }], "returns": "self" },
+        { "name": "statusCode", "parameters": [{ "name": "code", "type": "int" }], "returns": "self" },
+        { "name": "isSuccess", "returns": "bool" },
+        { "name": "isError", "returns": "bool" },
+        { "name": "getMessage", "returns": "?string" },
+        { "name": "getErrors", "returns": "array<string, string|string[]>" },
+        { "name": "getData", "returns": "array<string, mixed>" },
+        { "name": "getRedirectUrl", "returns": "?string" },
+        { "name": "hasRedirect", "returns": "bool" },
+        { "name": "getHttpStatusCode", "returns": "int" },
+        { "name": "toArray", "returns": "array<string, mixed>" }
+      ]
+    },
+    {
+      "name": "Validator",
+      "namespace": "Arbor\\Router\\Validation",
+      "description": "Data validation engine.",
+      "methods": [
+        { "name": "__construct", "parameters": [{ "name": "parser", "type": "Arbor\\Router\\Validation\\RuleParser", "default": "new RuleParser()" }] },
+        { "name": "addRule", "parameters": [{ "name": "rule", "type": "Arbor\\Router\\Validation\\RuleInterface" }], "returns": "static" },
+        { "name": "make", "parameters": [{ "name": "data", "type": "array<string, mixed>" }, { "name": "rules", "type": "array<string, string|string[]>" }], "returns": "Arbor\\Router\\Validation\\ValidationResult" },
+        { "name": "validate", "parameters": [{ "name": "data", "type": "array<string, mixed>" }, { "name": "rules", "type": "array<string, string|string[]>" }], "returns": "array<string, mixed>" }
+      ]
+    },
+    {
+      "name": "ValidationResult",
+      "namespace": "Arbor\\Router\\Validation",
+      "description": "Validation result value object.",
+      "methods": [
+        { "name": "passes", "returns": "bool" },
+        { "name": "fails", "returns": "bool" },
+        { "name": "errors", "returns": "array<string, string[]>" },
+        { "name": "errorsFor", "parameters": [{ "name": "field", "type": "string" }], "returns": "string[]" },
+        { "name": "firstError", "parameters": [{ "name": "field", "type": "string" }], "returns": "?string" },
+        { "name": "allErrors", "returns": "string[]" },
+        { "name": "toArray", "returns": "array<string, string[]>" }
+      ]
+    },
+    {
+      "name": "CsrfGuard",
+      "namespace": "Arbor\\Router\\Security",
+      "description": "Session-based CSRF protection helper.",
+      "methods": [
+        { "name": "getToken", "returns": "string" },
+        { "name": "regenerate", "returns": "string" },
+        { "name": "validate", "parameters": [{ "name": "request", "type": "Arbor\\Router\\Http\\RequestInterface" }], "returns": "void" },
+        { "name": "field", "returns": "string" }
+      ]
+    }
+  ]
+}
