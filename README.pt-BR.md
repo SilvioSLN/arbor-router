@@ -2,7 +2,8 @@
 
 ![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4?style=flat-square&logo=php)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)
-![Tests](https://img.shields.io/badge/Coverage-100%25-brightgreen?style=flat-square)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
+[![AI Ready](https://img.shields.io/badge/AI-Ready-8A2BE2.svg)](AGENTS.md)
 
 > 🇬🇧 **Read this documentation in English:** [README.md](README.md)  
 > 🤖 **Manual para Agentes de IA:** Veja [AGENTS.md](AGENTS.md) e o diretório [ai/](ai/README.md).
